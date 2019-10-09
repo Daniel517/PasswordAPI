@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const mysql = require('mysql')
 
-const config = require('../config')
+const config = require('../configs/config')
 
 const connection = mysql.createConnection({
 	host: config.host,
@@ -13,9 +13,12 @@ const connection = mysql.createConnection({
 
 router.get('/authenticate', (req, res) => {
 	const body = req.body
-	const sql = `SELECT id FROM users WHERE username = ${body.username} AND password = ${body.password}`
+	const sql = `SELECT user_id FROM users WHERE username = "${body.username}" AND password = "${body.password}"`
 	connection.query(sql, (err, rows, fields) => {
-		
+		if (err) {
+			console.log(err)
+			throw err
+		}
 		res.json(rows)
 	})
 })
